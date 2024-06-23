@@ -1,26 +1,19 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { MapData } from '../services/api';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface MapState {
-  center: [number, number];
-  zoom: number;
-  capturedImage: string | null;
-  savedMaps: MapData[];
-  loading: boolean;
-  error: string | null;
-}
+import { MAPBOX_CONFIG } from "../constants/config";
 
-const initialState: MapState = {
-  center: [-74.5, 40],
-  zoom: 9,
+const initialState: MapTypes.MapState = {
+  center: MAPBOX_CONFIG.DEFAULT_CENTER,
+  zoom: MAPBOX_CONFIG.DEFAULT_ZOOM,
   capturedImage: null,
   savedMaps: [],
+  annotation: "",
   loading: false,
   error: null,
 };
 
 const mapSlice = createSlice({
-  name: 'map',
+  name: "map",
   initialState,
   reducers: {
     setCenter: (state, action: PayloadAction<[number, number]>) => {
@@ -32,8 +25,11 @@ const mapSlice = createSlice({
     setCapturedImage: (state, action: PayloadAction<string>) => {
       state.capturedImage = action.payload;
     },
-    setSavedMaps: (state, action: PayloadAction<MapData[]>) => {
+    setSavedMaps: (state, action: PayloadAction<MapTypes.MapData[]>) => {
       state.savedMaps = action.payload;
+    },
+    setAnnotation: (state, action: PayloadAction<string>) => {
+      state.annotation = action.payload;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -44,5 +40,5 @@ const mapSlice = createSlice({
   },
 });
 
-export const { setCenter, setZoom, setCapturedImage, setSavedMaps, setLoading, setError } = mapSlice.actions;
+export const { setCenter, setZoom, setCapturedImage, setSavedMaps, setLoading, setAnnotation, setError } = mapSlice.actions;
 export default mapSlice.reducer;

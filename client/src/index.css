@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body,
+html {
+  background-color: #121212;
+}
+
+@layer base {
+  :root {
+    --card-padding: theme("spacing[6]");
+    --accordion-padding: theme("spacing[4]");
+    --feedback-padding: var(--card-padding);
+    --toast-padding: theme("spacing[4]");
+  }
+}
+
+@layer base {
+  :root {
+    @media (prefers-color-scheme: dark) {
+      --display-text-color: theme(colors.white);
+      --title-text-color: var(--display-text-color);
+      --caption-text-color: theme(colors.gray.500);
+      --body-text-color: theme(colors.gray.300);
+      --placeholder-text-color: theme(colors.gray.600);
+    }
+  }
+}
