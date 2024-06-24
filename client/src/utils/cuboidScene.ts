@@ -4,7 +4,7 @@ import { CUBOID_CONFIG, CAMERA_CONFIG, MATERIAL_CONFIG, BABYLON_CONFIG, COLOR_CO
 export class CuboidScene {
   private engine: Engine;
   private scene: Scene;
-  private cuboid: Mesh;
+  private cuboid!: Mesh;
 
   constructor(private canvas: HTMLCanvasElement, private setProgress: (progress: number) => void) {
     this.engine = new Engine(this.canvas, BABYLON_CONFIG.ANTIALIAS, { preserveDrawingBuffer: true, stencil: true }, BABYLON_CONFIG.ADAPTIVE_PIXEL_RATIO);

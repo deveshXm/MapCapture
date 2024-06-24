@@ -23,7 +23,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement | HTMLAnc
 
 export const Card: React.FC<CardProps> = ({ className, variant = "mixed", fancy = false, children, gradient = false, href, ...props }) => {
   const Component = href ? "a" : "div";
-  const { outer } = gradientCard({ variant });
+  const { outer } = gradientCard({ variant: variant as "soft" | "elevated" });
 
   if (fancy && gradient) {
     throw new Error("The fancy and gradient props cannot be used together.");

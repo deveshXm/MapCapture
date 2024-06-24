@@ -1,6 +1,6 @@
 import geohash from "ngeohash";
 import React, { useState, useEffect } from "react";
-import Map, { Source, Layer, ViewState, ViewStateChangeEvent } from "react-map-gl";
+import Map, { Source, Layer, ViewState, ViewStateChangeEvent, FillLayer } from "react-map-gl";
 
 import { MAPBOX_CONFIG } from "../../../constants/config";
 import Progress from "../../ui/Progress";
@@ -60,7 +60,7 @@ const RegionMapView: React.FC<RegionMapViewProps> = ({ geohashString }) => {
     }
   }, [geohashString]);
 
-  const layerStyle: React.ComponentProps<typeof Layer>["style"] = {
+  const layerStyle: FillLayer = {
     id: "geohash-region",
     type: "fill",
     paint: {
@@ -102,7 +102,7 @@ const RegionMapView: React.FC<RegionMapViewProps> = ({ geohashString }) => {
         mapboxAccessToken={MAPBOX_CONFIG.ACCESS_TOKEN}
       >
         {geojson && (
-          <Source type="geojson" data={geojson}>
+          <Source type="geojson" data={geojson as GeoJSON.Feature<GeoJSON.Geometry>}>
             <Layer {...layerStyle} />
           </Source>
         )}

@@ -12,7 +12,11 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(({ 
   }
 
   return (
-    <textarea ref={forwardedRef as React.RefObject<HTMLTextAreaElement>} className={input({ variant, fancy, size, class: twMerge(textarea(), className) })} {...props} />
+    <textarea
+      ref={forwardedRef as React.RefObject<HTMLTextAreaElement>}
+      className={input({ variant, fancy: fancy ? "input" : undefined, size, class: twMerge(textarea(), className) })}
+      {...props}
+    />
   );
 });
 
