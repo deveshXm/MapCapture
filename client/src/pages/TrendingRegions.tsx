@@ -37,7 +37,7 @@ const TrendingRegions: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col w-full md:w-[60%] mb-20 mt-20">
-      <Title className="mb-4 mx-auto">Realtime Trending Regions (24h)</Title>
+      <Title className="mb-4 mx-auto">Realtime Trending Regions (Last 24h)</Title>
       <div className="space-y-5">
         {trendingRegions.map((region, index) => (
           <div>

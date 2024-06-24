@@ -1,10 +1,8 @@
 import axios from "axios";
-import { MAPBOX_CONFIG } from "../constants/config";
-
-const API_BASE_URL = "http://localhost:3333/api"; // Update this with your actual API URL
+import { API_CONFIG } from "../constants/config";
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_CONFIG.BASE_URL,
 });
 
 export const setAuthToken = (token: string) => {
@@ -20,12 +18,10 @@ export const apiService = {
     const response = await api.post("/users/register", { username, email, password });
     return response.data;
   },
-
   login: async (email: string, password: string) => {
     const response = await api.post("/users/login", { email, password });
     return response.data;
   },
-
   saveMapData: async (center: [number, number], zoom: number, capturedImage: string, annotation?: string) => {
     const response = await api.post("/maps", { center, zoom, capturedImage, annotation });
     return response.data;
@@ -48,6 +44,6 @@ export const apiService = {
   },
   getStaticMapImageUrl: (center: [number, number], zoom: number, width: number, height: number): string => {
     const [lng, lat] = center;
-    return `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${lng},${lat},${zoom}/${width}x${height}@2x?access_token=${MAPBOX_CONFIG.ACCESS_TOKEN}`;
+    return `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${lng},${lat},${zoom}/${width}x${height}@2x`;
   },
 };

@@ -1,5 +1,6 @@
 export const ENV = import.meta.env.VITE_ENV;
 
+
 export const MAPBOX_CONFIG = {
   ACCESS_TOKEN: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN,
   STYLE_URL: "mapbox://styles/mapbox/streets-v11",
@@ -21,5 +22,5 @@ export const STATIC_MAP_CONFIG = {
 };
 
 export const API_CONFIG = {
-  BASE_URL: ENV === "dev" ? "http://localhost:3333/api" : import.meta.env.BASE_URL,
+  BASE_URL: ENV === "dev" ? "http://localhost:3333/api" : import.meta.env.VITE_BASE_URL,
 };

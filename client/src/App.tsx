@@ -32,6 +32,7 @@ const App: React.FC = () => {
     setTimeout(() => {
       setLoading(false);
     }, 2000);
+
   }, [token, dispatch]);
 
   if (loading) {

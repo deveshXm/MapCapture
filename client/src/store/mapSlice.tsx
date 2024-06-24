@@ -22,7 +22,7 @@ const mapSlice = createSlice({
       state.zoom = action.payload;
     },
     setCapturedImage: (state, action: PayloadAction<string | null>) => {
-      state.capturedImage = action.payload;
+      state.capturedImage = `${action.payload}?access_token=${MAPBOX_CONFIG.ACCESS_TOKEN}`;
     },
     setSavedMaps: (state, action: PayloadAction<MapTypes.MapData[]>) => {
       state.savedMaps = action.payload;
