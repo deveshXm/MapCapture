@@ -21,5 +21,5 @@ export const STATIC_MAP_CONFIG = {
 };
 
 export const API_CONFIG = {
-  BASE_URL: ENV === "dev" ? "http://localhost:3333/api" : "https://api.example.com",
+  BASE_URL: ENV === "dev" ? "http://localhost:3333/api" : import.meta.env.BASE_URL,
 };
