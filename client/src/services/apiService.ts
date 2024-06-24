@@ -30,17 +30,20 @@ export const apiService = {
     const response = await api.post("/maps", { center, zoom, capturedImage, annotation });
     return response.data;
   },
-
   getMapData: async (id: string) => {
     const response = await api.get(`/maps/${id}`);
     return response.data;
   },
   getUserMaps: async (page: number = 1, limit: number = 10) => {
-    const response = await api.get(`/maps/user/maps?page=${page}&limit=${limit}`);
+    const response = await api.get(`/maps/user/?page=${page}&limit=${limit}`);
     return response.data;
   },
   getTopRegions: async () => {
-    const response = await api.get("/maps/top-regions");
+    const response = await api.get("/maps/top");
+    return response.data;
+  },
+  getTopRegions24H: async () => {
+    const response = await api.get("/maps/top/24h");
     return response.data;
   },
   getStaticMapImageUrl: (center: [number, number], zoom: number, width: number, height: number): string => {

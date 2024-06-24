@@ -7,11 +7,12 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import MapCapture from "./pages/MapCapture";
 import TopRegions from "./pages/TopRegions";
-import Navbar from "./components/Navbar";
 
 import { clearCredentials, setCredentials } from "./store/authSlice";
 import { RootState } from "./store";
 import { Title } from "./components/ui/Title";
+import Navbar from "./components/navbar";
+import TrendingRegions from "./pages/TrendingRegions";
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -61,6 +62,7 @@ const App: React.FC = () => {
               <Route path="/home" element={<Home />} />
               <Route path="/capture" element={<MapCapture />} />
               <Route path="/top-regions" element={<TopRegions />} />
+              <Route path="/trending" element={<TrendingRegions />} />
               <Route path="*" element={<Navigate to="/home" />} />
             </Routes>
           </div>

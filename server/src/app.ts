@@ -9,7 +9,7 @@ import mapRoutes from "./routes/mapRoutes";
 import userRoutes from "./routes/userRoutes";
 
 import { errorHandler } from "./middleware/errorHandler";
-import { cacheInit } from "./services/cacheService";
+import { cacheInit } from "./config/cache";
 
 dotenv.config();
 connectRedis();

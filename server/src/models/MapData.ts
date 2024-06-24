@@ -24,7 +24,7 @@ const MapDataSchema: Schema = new Schema({
 // Pre-save hook to generate geohash
 MapDataSchema.pre<IMapData>("save", function (next) {
   if (this.isModified("center")) {
-    this.geohash = geohash.encode(this.center[1], this.center[0], 5);
+    this.geohash = geohash.encode(this.center[1], this.center[0], 3);
   }
   next();
 });

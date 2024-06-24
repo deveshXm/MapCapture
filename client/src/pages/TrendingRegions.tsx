@@ -1,29 +1,35 @@
-// src/components/TopRegions.tsx
-
-import React, { useEffect, useState } from "react";
-import { apiService } from "../services/apiService";
-import { Title } from "../components/ui/Title";
 import { notification } from "antd";
+import React, { useEffect, useState } from "react";
+
+import { Title } from "../components/ui/Title";
 import RegionMapView from "../components/pages/TopRegions.tsx/RegionMapView";
 
-interface TopRegion {
+import { apiService } from "../services/apiService";
+
+interface TrendingRegions {
   geohash: string;
   region: { latitude: number; longitude: number };
   count: number;
 }
 
-const TopRegions: React.FC = () => {
-  const [topRegions, setTopRegions] = useState<TopRegion[]>([]);
+const TrendingRegions: React.FC = () => {
+  const [trendingRegions, setTrendingRegions] = useState<TrendingRegions[]>([]);
 
   useEffect(() => {
-    // Fetch immediately on mount
+    const intervalId = setInterval(() => {
+      fetchTopRegions();
+    }, 5000); // Poll every 5 seconds
+
     fetchTopRegions();
+
+    // Cleanup function to clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
   }, []);
 
   const fetchTopRegions = async () => {
     try {
-      const response = await apiService.getTopRegions();
-      setTopRegions(response.data);
+      const response = await apiService.getTopRegions24H();
+      setTrendingRegions(response.data);
     } catch (error) {
       notification.error({ message: "Couldn't fetch top regions." });
     }
@@ -31,9 +37,9 @@ const TopRegions: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col w-full md:w-[60%] mb-20 mt-20">
-      <Title className="mb-4 mx-auto">All Time Top 3 Regions</Title>
+      <Title className="mb-4 mx-auto">Realtime Trending Regions (24h)</Title>
       <div className="space-y-5">
-        {topRegions.map((region, index) => (
+        {trendingRegions.map((region, index) => (
           <div>
             <Title key={index} className="mb-2">
               {`${region.count} Captures`}
@@ -46,4 +52,4 @@ const TopRegions: React.FC = () => {
   );
 };
 
-export default TopRegions;
+export default TrendingRegions;

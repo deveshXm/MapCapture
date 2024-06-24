@@ -6,8 +6,8 @@ import rateLimit from "express-rate-limit";
 import { validateMapData } from "../validators/mapValidators";
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 60 * 1000, // 1 minute
+  max: 50, // limit each IP to 50 requests per windowMs
 });
 
 export const saveMapData = asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -40,6 +40,14 @@ export const getTopRegions = [
   limiter,
   asyncHandler(async (req: Request, res: Response) => {
     const topRegions = await mapService.getTopRegions();
+    res.status(200).json({ success: true, data: topRegions });
+  }),
+];
+
+export const getTopRegions24H = [
+  limiter,
+  asyncHandler(async (req: Request, res: Response) => {
+    const topRegions = await mapService.getTopRegions24H();
     res.status(200).json({ success: true, data: topRegions });
   }),
 ];
