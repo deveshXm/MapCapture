@@ -34,7 +34,6 @@ const App: React.FC = () => {
     }, 2000);
 
   }, [token, dispatch]);
-
   if (loading) {
     return (
       <div className="h-screen dark flex justify-center items-center">
@@ -59,12 +58,11 @@ const App: React.FC = () => {
           <div className="p-4 flex flex-1 items-center justify-center">
             <Routes>
               {/* Authenticated routes */}
-              <Route path="/" element={<Navigate to="/home" />} />
-              <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Home />} />
               <Route path="/capture" element={<MapCapture />} />
               <Route path="/top-regions" element={<TopRegions />} />
               <Route path="/trending" element={<TrendingRegions />} />
-              <Route path="*" element={<Navigate to="/home" />} />
+              <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>
         )}

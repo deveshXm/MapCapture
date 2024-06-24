@@ -47,6 +47,13 @@ const Home: React.FC = () => {
     setSelectedMap(null);
   };
 
+  if (loading)
+    return (
+      <div className="flex w-full h-full">
+        <Title className="m-auto">Loading</Title>
+      </div>
+    );
+
   return (
     <div className="h-full">
       {userMaps.length ? (
@@ -54,10 +61,6 @@ const Home: React.FC = () => {
           {userMaps.map((map) => (
             <DashboardListItem key={map._id} map={map} onClick={() => handleMapClick(map)} />
           ))}
-        </div>
-      ) : loading ? (
-        <div className="flex w-full h-full">
-          <Title className="m-auto">Loading</Title>
         </div>
       ) : (
         <div className="flex w-full h-full">
