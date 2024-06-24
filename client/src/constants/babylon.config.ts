@@ -1,12 +1,8 @@
-export const UI_CONFIG = {
-  CANVAS_WIDTH: "100%",
-  CANVAS_HEIGHT: 400,
-};
 
 export const CUBOID_CONFIG = {
   WIDTH: 4,
-  HEIGHT: 3,
-  DEPTH: 2,
+  HEIGHT: 6,
+  DEPTH: 4,
 };
 
 export const CAMERA_CONFIG = {
@@ -29,6 +25,7 @@ export const BABYLON_CONFIG = {
   ADAPTIVE_PIXEL_RATIO: true,
 };
 
-export const SCENE_CONFIG = {
-  CLEAR_COLOR: [0.5, 0.5, 0.5, 1],
+export const COLOR_CONFIG = {
+  EMISSIVE_COLOR: [1, 1, 1, 1],
+  CLEAR_COLOR: [18 / 255, 18 / 255, 18 / 255, 1],
 };

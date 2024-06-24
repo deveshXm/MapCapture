@@ -1,47 +1,64 @@
-import MapData, { IMapData } from "../models/MapData";
-import ApiError from "../utils/ApiError";
-import { cache } from "../config/cache";
+import geohash from "ngeohash";
+import { PipelineStage } from "mongoose";
 
-export const saveMapData = async (mapData: Partial<IMapData>): Promise<IMapData> => {
+import ApiError from "../utils/ApiError";
+import { redisClient } from "../config/redis";
+import MapData, { IMapData } from "../models/MapData";
+
+const CACHE_EXPIRATION = 30; // 30 sec
+
+export const saveMapData = async (mapData: IMapData): Promise<IMapData> => {
   const newMapData = await MapData.create(mapData);
+  await redisClient.zIncrBy("top_regions", 1, newMapData.geohash);
   return newMapData;
 };
 
 export const getMapData = async (id: string): Promise<IMapData> => {
-  const cachedData = cache.get<IMapData>(id);
-  if (cachedData) return cachedData;
+  const cachedData = await redisClient.get(`mapData:${id}`);
+  if (cachedData) return JSON.parse(cachedData);
 
   const mapData = await MapData.findById(id);
   if (!mapData) throw new ApiError(404, "Map data not found");
 
-  cache.set(id, mapData);
+  await redisClient.set(`mapData:${id}`, JSON.stringify(mapData), {
+    EX: CACHE_EXPIRATION,
+  });
   return mapData;
 };
 
-export const getUserMapData = async (userId: string): Promise<IMapData[]> => {
-  return MapData.find({ userId }).sort({ createdAt: -1 });
+export const getUserMapData = async (userId: string, page: number, limit: number): Promise<{ data: IMapData[]; total: number }> => {
+  const skip = (page - 1) * limit;
+  const [data, total] = await Promise.all([MapData.find({ userId }).sort({ createdAt: -1 }).skip(skip).limit(limit), MapData.countDocuments({ userId })]);
+  return { data, total };
 };
 
 export const getTopRegions = async (): Promise<{ region: string; count: number }[]> => {
-  const topRegions = await MapData.aggregate([
+  const cachedTopRegions = await redisClient.get("topRegions");
+  if (cachedTopRegions) return JSON.parse(cachedTopRegions);
+  const pipeline: PipelineStage[] = [
     {
       $group: {
-        _id: { lat: { $round: [{ $arrayElemAt: ["$center", 0] }, 2] }, lng: { $round: [{ $arrayElemAt: ["$center", 1] }, 2] } },
+        _id: "$geohash",
         count: { $sum: 1 },
       },
     },
-    { $sort: { count: -1 } },
-    { $limit: 3 },
     {
-      $project: {
-        _id: 0,
-        region: {
-          $concat: [{ $toString: "$_id.lat" }, ",", { $toString: "$_id.lng" }],
-        },
-        count: 1,
-      },
+      $sort: { count: -1 } as const,
     },
-  ]);
-
+    {
+      $limit: 3,
+    },
+  ];
+  const result = await MapData.aggregate(pipeline);
+  const topRegions = result.map((item) => {
+    const { latitude, longitude } = geohash.decode(item._id);
+    return {
+      region: `${latitude},${longitude}`,
+      count: item.count,
+    };
+  });
+  await redisClient.set("topRegions", JSON.stringify(topRegions), {
+    EX: CACHE_EXPIRATION,
+  });
   return topRegions;
 };

@@ -8,7 +8,6 @@ const initialState: MapTypes.MapState = {
   capturedImage: null,
   savedMaps: [],
   annotation: "",
-  loading: false,
   error: null,
 };
 
@@ -22,7 +21,7 @@ const mapSlice = createSlice({
     setZoom: (state, action: PayloadAction<number>) => {
       state.zoom = action.payload;
     },
-    setCapturedImage: (state, action: PayloadAction<string>) => {
+    setCapturedImage: (state, action: PayloadAction<string | null>) => {
       state.capturedImage = action.payload;
     },
     setSavedMaps: (state, action: PayloadAction<MapTypes.MapData[]>) => {
@@ -31,14 +30,11 @@ const mapSlice = createSlice({
     setAnnotation: (state, action: PayloadAction<string>) => {
       state.annotation = action.payload;
     },
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
-    },
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
   },
 });
 
-export const { setCenter, setZoom, setCapturedImage, setSavedMaps, setLoading, setAnnotation, setError } = mapSlice.actions;
+export const { setCenter, setZoom, setCapturedImage, setSavedMaps, setAnnotation, setError } = mapSlice.actions;
 export default mapSlice.reducer;

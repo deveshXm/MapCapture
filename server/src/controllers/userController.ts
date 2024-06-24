@@ -1,22 +1,18 @@
 import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import User from "../models/User";
-import ApiError from "../utils/ApiError";
+import { registerUser, loginUser } from "../services/userService";
 import { asyncHandler } from "../utils/asyncHandler";
+import { validateLogin, validateRegister } from "../validators/userValidators";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
+  validateRegister(req.body);
   const { username, email, password } = req.body;
-  const user = await User.create({ username, email, password });
-  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET as string, { expiresIn: "1d" });
-  res.status(201).json({ success: true, token, user: { id: user._id, username, email } });
+  const { token, user } = await registerUser(username, email, password);
+  res.status(201).json({ success: true, token, user });
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
+  validateLogin(req.body);
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user || !(await user.comparePassword(password))) {
-    throw new ApiError(401, "Invalid credentials");
-  }
-  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET as string, { expiresIn: "1d" });
-  res.status(200).json({ success: true, token, user: { id: user._id, username: user.username, email: user.email } });
+  const { token, user } = await loginUser(email, password);
+  res.status(200).json({ success: true, token, user });
 });

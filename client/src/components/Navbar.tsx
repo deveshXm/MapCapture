@@ -1,12 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useRef, useState } from "react";
+
 import { RootState } from "../store";
 import { clearCredentials } from "../store/authSlice";
-import { Display } from "./ui/Display";
+
 import Tabs from "./ui/Tabs";
-import { Title } from "./ui/Title";
 import Button from "./ui/Button";
+import Drawer from "./ui/Drawer";
+import { Title } from "./ui/Title";
+import { Display } from "./ui/Display";
 
 type TabsAppProps = "home" | "capture" | "top-regions";
 
@@ -49,11 +52,11 @@ const Navbar: React.FC = () => {
   }, [location]);
 
   return (
-    <nav className="bg-transparent p-4 w-full flex items-center justify-between flex-col md:flex-row gap-4">
+    <nav className="bg-transparent p-4 w-full flex items-center justify-between flex-row gap-4 min-h-24">
       <Link to="/">
         <Display size={"4xl"}>Map Capture</Display>
       </Link>
-      <div className="flex-grow flex justify-center items-center">
+      <div className="justify-center items-center hidden md:flex">
         <Tabs.Root className="space-y-4" defaultValue={state} onValueChange={(value) => setState(value as TabsAppProps)}>
           <Tabs.List size="lg" intent="gray" data-shade="925" variant="soft" triggerVariant="plain">
             <Tabs.Indicator ref={spanRef} variant="elevated" />
@@ -75,11 +78,42 @@ const Navbar: React.FC = () => {
           </Tabs.List>
         </Tabs.Root>
       </div>
-      <div className="flex items-center">
+      <div className="items-center justify-center hidden md:flex">
         <Title className="mr-10">{user ? "Hi, " + user.username[0].toUpperCase() + user.username.slice(1) : ""}</Title>
-        <Button.Root variant="ghost" onClick={handleLogout}>
+        <Button.Root variant="soft" onClick={handleLogout}>
           <Button.Label>Logout</Button.Label>
         </Button.Root>
+      </div>
+      <div className="flex md:hidden">
+        <Drawer.Root shouldScaleBackground>
+          <Drawer.Trigger asChild>
+            <Button.Root variant="soft">
+              <Button.Label>Menu</Button.Label>
+            </Button.Root>
+          </Drawer.Trigger>
+          <Drawer.Portal>
+            <Drawer.Overlay />
+            <Drawer.Content className="bg-[#121212]">
+              <div className="max-w-md mx-auto mt-6 flex flex-col items-center justify-center gap-2">
+                <Link to="/home">
+                  <Button.Root variant="soft" className="w-40">
+                    <Button.Label>Home</Button.Label>
+                  </Button.Root>
+                </Link>
+                <Link to="/capture">
+                  <Button.Root variant="soft" className="w-40">
+                    <Button.Label>Capture</Button.Label>
+                  </Button.Root>
+                </Link>
+                <Link to="/top-regions">
+                  <Button.Root variant="soft" className="w-40">
+                    <Button.Label>Top</Button.Label>
+                  </Button.Root>
+                </Link>
+              </div>
+            </Drawer.Content>
+          </Drawer.Portal>
+        </Drawer.Root>
       </div>
     </nav>
   );

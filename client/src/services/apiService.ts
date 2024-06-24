@@ -35,11 +35,10 @@ export const apiService = {
     const response = await api.get(`/maps/${id}`);
     return response.data;
   },
-  getUserMaps: async () => {
-    const response = await api.get("/maps/user/maps");
+  getUserMaps: async (page: number = 1, limit: number = 10) => {
+    const response = await api.get(`/maps/user/maps?page=${page}&limit=${limit}`);
     return response.data;
   },
-
   getTopRegions: async () => {
     const response = await api.get("/maps/top-regions");
     return response.data;

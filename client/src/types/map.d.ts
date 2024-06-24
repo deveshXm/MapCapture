@@ -4,13 +4,12 @@ declare namespace MapTypes {
     zoom: number;
     capturedImage: string | null;
     savedMaps: MapData[];
-    loading: boolean;
     error: string | null;
     annotation: string;
   }
 
   interface MapData {
-    id: string;
+    _id: string;
     center: [number, number];
     zoom: number;
     capturedImage: string;

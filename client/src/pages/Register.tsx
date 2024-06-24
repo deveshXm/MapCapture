@@ -37,7 +37,7 @@ const Register: React.FC = () => {
   return (
     <AuroraBackground>
       <div className=" h-full flex justify-center items-center relative">
-        <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 md:shadow-[0px_0px_0px_0.25px_#686869] bg-black min-w-96">
+        <div className="max-w-md w-full mx-auto rounded-2xl p-4 md:p-8 shadow-[0px_0px_0px_0.2px_#686869] bg-black min-w-80 md:min-w-96">
           <h2 className="font-bold text-3xl text-neutral-200">Register</h2>
           <form className="my-8" onSubmit={handleSubmit}>
             <LabelInputContainer className="mb-4">

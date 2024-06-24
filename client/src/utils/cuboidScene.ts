@@ -1,4 +1,5 @@
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, MeshBuilder, StandardMaterial, Texture, Color4, Mesh } from "@babylonjs/core";
+import { Engine, Scene, ArcRotateCamera, Vector3, MeshBuilder, StandardMaterial, Texture, Color4, Mesh, Color3 } from "@babylonjs/core";
+import { CUBOID_CONFIG, CAMERA_CONFIG, MATERIAL_CONFIG, BABYLON_CONFIG, COLOR_CONFIG } from "../constants/babylon.config";
 
 export class CuboidScene {
   private engine: Engine;
@@ -6,28 +7,37 @@ export class CuboidScene {
   private cuboid: Mesh;
 
   constructor(private canvas: HTMLCanvasElement, private setProgress: (progress: number) => void) {
-    this.engine = new Engine(this.canvas, true, { preserveDrawingBuffer: true, stencil: true });
+    this.engine = new Engine(this.canvas, BABYLON_CONFIG.ANTIALIAS, { preserveDrawingBuffer: true, stencil: true }, BABYLON_CONFIG.ADAPTIVE_PIXEL_RATIO);
     this.scene = new Scene(this.engine);
     this.initScene();
   }
 
   private initScene(): void {
-    this.setProgress(10); // Initial progress after setting up the engine
+    this.setProgress(10);
 
-    const camera = new ArcRotateCamera("camera", Math.PI / 4, Math.PI / 3, 10, Vector3.Zero(), this.scene);
+    const camera = new ArcRotateCamera("camera", CAMERA_CONFIG.ALPHA, CAMERA_CONFIG.BETA, CAMERA_CONFIG.RADIUS, Vector3.FromArray(CAMERA_CONFIG.TARGET), this.scene);
     camera.attachControl(this.canvas, true);
-    this.setProgress(30); // Progress after setting up the camera
+    this.setProgress(30);
 
-    new HemisphericLight("light", new Vector3(1, 1, 0), this.scene);
-    this.setProgress(50); // Progress after setting up the light
+    this.cuboid = MeshBuilder.CreateBox(
+      "cuboid",
+      {
+        height: CUBOID_CONFIG.HEIGHT,
+        width: CUBOID_CONFIG.WIDTH,
+        depth: CUBOID_CONFIG.DEPTH,
+      },
+      this.scene
+    );
 
-    this.cuboid = MeshBuilder.CreateBox("cuboid", { size: 2 }, this.scene);
-    const material = new StandardMaterial("material", this.scene);
+    const material = new StandardMaterial(MATERIAL_CONFIG.NAME, this.scene);
+    material.disableLighting = true;
+    material.emissiveColor = new Color3(...COLOR_CONFIG.EMISSIVE_COLOR);
+
     this.cuboid.material = material;
-    this.setProgress(70); // Progress after creating the cuboid
+    this.setProgress(70);
 
-    this.scene.clearColor = new Color4(0, 0, 0, 1);
-    this.setProgress(100); // Final progress after setting up the scene
+    this.scene.clearColor = new Color4(...COLOR_CONFIG.CLEAR_COLOR);
+    this.setProgress(100);
   }
 
   public run(): void {
@@ -44,7 +54,7 @@ export class CuboidScene {
     setProgress(0);
     const material = this.cuboid.material as StandardMaterial;
     const texture = new Texture(imageUrl, this.scene, undefined, undefined, undefined, () => {
-      setProgress(100); // Set progress to 100% once the texture is loaded
+      setProgress(100);
     });
     material.diffuseTexture = texture;
   }

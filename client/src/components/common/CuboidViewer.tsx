@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { CuboidScene } from "../../utils/cuboidScene";
-import { UI_CONFIG } from "../../constants/babylon.config";
 
 import Progress from "../ui/Progress";
+import { MAPBOX_CONFIG } from "../../constants/config";
 
 const CuboidViewer: React.FC<{ capturedImage: string }> = ({ capturedImage }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -29,11 +29,12 @@ const CuboidViewer: React.FC<{ capturedImage: string }> = ({ capturedImage }) =>
     if (sceneRef.current && capturedImage) {
       setProgress(0); // Reset progress when a new image is set
       sceneRef.current.updateTexture(capturedImage, setProgress);
+      setProgress(50);
     }
   }, [capturedImage]);
 
   return (
-    <div style={{ position: "relative", width: UI_CONFIG.CANVAS_WIDTH, height: UI_CONFIG.CANVAS_HEIGHT }}>
+    <div style={{ position: "relative", width: MAPBOX_CONFIG.MAP_WIDTH, height: MAPBOX_CONFIG.MAP_HEIGHT }}>
       {progress < 100 && (
         <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-[#1f1f1f] flex-1 ">
           <Progress.Root className="w-72" data-orientation="vertical" value={progress} size="md" variant="soft">

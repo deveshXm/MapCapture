@@ -46,7 +46,7 @@ const MapView: React.FC = () => {
           latitude: center[1],
           zoom: zoom,
         }}
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%", borderRadius: "0.5rem" }}
         mapStyle={MAPBOX_CONFIG.STYLE_URL}
         onError={handleError}
         onMove={handleMapMove}
