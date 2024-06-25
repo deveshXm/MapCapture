@@ -43,17 +43,10 @@ export const fetchTopRegions24HFromDB = async () => {
     {
       $limit: 3,
     },
+    { $project: { _id: 0, geohash: "$_id", count: 1 } },
   ];
 
   const result = await MapData.aggregate(pipeline);
 
-  const topRegions24H = result.map((item) => {
-    const region = geohash.decode_bbox(item._id);
-    return {
-      region,
-      geohash: item._id,
-      count: item.count,
-    };
-  });
-  return topRegions24H;
+  return result;
 };

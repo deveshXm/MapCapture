@@ -17,13 +17,13 @@ const TrendingRegions: React.FC = () => {
   const [trendingRegions, setTrendingRegions] = useState<TrendingRegions[]>([]);
 
   useEffect(() => {
-    fetchTopRegions();
+    fetchTrendingRegions();
   }, []);
 
-  const fetchTopRegions = async () => {
+  const fetchTrendingRegions = async () => {
     try {
       setLoading(true);
-      const response = await apiService.getTopRegions();
+      const response = await apiService.getTopRegions24H();
       setTrendingRegions(response.data);
     } catch (error) {
       notification.error({ message: "Couldn't fetch top regions." });

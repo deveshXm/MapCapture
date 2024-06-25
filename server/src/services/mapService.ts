@@ -93,11 +93,8 @@ export const getTopRegions24H = async (): Promise<{ geohash: string; count: numb
       await redisClient.setEx(TOP_REGIONS_24H_CACHE_KEY, TOP_REGIONS_24H_CACHE_TTL, JSON.stringify(result));
       return result;
     }
-
     // Fallback to MongoDB if Redis doesn't have data
     const topRegions24H = await fetchTopRegions24HFromDB();
-
-    // Cache the result from MongoDB
     await redisClient.setEx(TOP_REGIONS_24H_CACHE_KEY, TOP_REGIONS_24H_CACHE_TTL, JSON.stringify(topRegions24H));
     return topRegions24H;
   } catch (error) {
