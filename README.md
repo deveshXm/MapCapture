@@ -2,7 +2,7 @@
 
 This project is a MERN (MongoDB, Express.js, React.js, Node.js) stack application that allows users to capture map regions and visualize them on a 3D cuboid.
 
-Link : snaptrude-project.vercel.app
+Link : [mapcap.vercel.app](mapcap.vercel.app)
 
 ## ✨ Features
 
@@ -27,8 +27,8 @@ Link : snaptrude-project.vercel.app
 1. Clone the repository:
 
    ```
-   git clone https://github.com/deveshXm/snaptrude-project
-   cd snaptrude-project
+   git clone https://github.com/deveshXm/MapCapture
+   cd MapCapture
    ```
 
 2. Install Dependencies
