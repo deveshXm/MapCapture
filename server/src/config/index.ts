@@ -2,9 +2,9 @@ import fs from "fs";
 import path from "path";
 
 import { shutdownQueue } from "./queue";
+import { connectRedis, disconnectRedis } from "./redis";
 import { connectDatabase, disconnectDatabase } from "./database";
 import { startCacheRefreshJob, stopCacheRefreshJob } from "./cache";
-import { connectRedis, disconnectRedis, redisClient } from "./redis";
 
 export async function startup() {
   try {

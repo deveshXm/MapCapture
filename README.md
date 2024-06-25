@@ -61,7 +61,7 @@ Link : [mapcap.vercel.app](mapcap.vercel.app)
 
 ## 🔌 API Endpoints
 
-- `POST /api/maps`: Save a new map capture
+- `POST /api/maps/`: Save a new map capture
 - `GET /api/maps/user/?page=1`: Retrieve all captures for the authenticated user
 - `GET /api/maps/top`: Get top 3 most frequently captured regions of all time
 - `GET /api/maps/top24h` : Get top 3 most frequently captured regions from last 24 hour
@@ -76,35 +76,7 @@ Our application implements a caching strategy for fetching and storing the top r
 
 ### Implementation
 
-1. **Redis Caching**: We use Redis as an in-memory data store to cache the top regions data.
 
-2. **Periodic Updates**: A background job updates the Redis cache every few seconds with the latest top regions data.
-
-3. **API Endpoint**: When the API is queried for top regions, it first checks the Redis cache. If data is available, it's returned immediately. If not, it falls back to querying the database.
-
-4. **Database Query**: The database query uses MongoDB's aggregation pipeline to efficiently calculate the top regions.
-
-### Why This Approach?
-
-1. **Performance**: By caching data in Redis, we significantly reduce response times for frequent requests.
-
-2. **Reduced Database Load**: Periodic updates to the cache minimize direct database queries, reducing load on the primary database.
-
-3. **Data Freshness**: Updating the cache every few seconds ensures that the data remains relatively fresh without overwhelming the system.
-
-4. **Scalability**: This approach can easily handle increasing loads by scaling the Redis cache horizontally.
-
-5. **Fault Tolerance**: If the cache fails, the system falls back to direct database queries, ensuring continued operation.
-
-### Alternatives Considered
-
-1. **No Caching**: While simpler, this would result in higher database load and slower response times.
-
-2. **Application-Level Caching**: This would be less efficient for distributed systems and wouldn't persist across application restarts.
-
-3. **Database-Level Caching**: While effective, it wouldn't provide as much flexibility and would be more complex to implement and manage.
-
-4. **CDN Caching**: While powerful for static assets, it's less suitable for frequently changing dynamic data like our top regions.
 
 ### Future Improvements
 
