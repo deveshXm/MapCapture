@@ -3,7 +3,7 @@ import React, { ChangeEventHandler, useState } from "react";
 import Modal from "../../ui/Modal";
 import Button from "../../ui/Button";
 import { Label } from "../../ui/label";
-import { Input } from "../../ui/Input";
+import { Input } from "../../ui/input";
 
 interface AnnotationModalProps {
   onClose: () => void;
