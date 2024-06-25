@@ -54,9 +54,9 @@ const Home: React.FC = () => {
     );
 
   return (
-    <div className="h-full">
+    <div className="h-full w-full">
       {userMaps.length ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
           {userMaps.map((map) => (
             <CaptureItem key={map._id} map={map} onClick={() => handleMapClick(map)} />
           ))}
