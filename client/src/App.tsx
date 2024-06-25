@@ -28,7 +28,6 @@ const App: React.FC = () => {
     } else {
       dispatch(clearCredentials());
     }
-    console.log("first", { storedToken, storedUser, token });
     setTimeout(() => {
       setLoading(false);
     }, 2000);

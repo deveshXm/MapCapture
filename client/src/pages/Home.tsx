@@ -6,7 +6,7 @@ import { apiService } from "../services/apiService";
 
 import { Title } from "../components/ui/Title";
 import MapDetailModal from "../components/modal/MapDetailModal";
-import DashboardListItem from "../components/pages/Home/CaptureItem";
+import CaptureItem from "../components/pages/Home/CaptureItem";
 import PaginationButton from "../components/pages/Home/PaginationButton";
 
 const Home: React.FC = () => {
@@ -17,7 +17,6 @@ const Home: React.FC = () => {
   const [selectedMap, setSelectedMap] = useState<MapTypes.MapData | null>(null);
 
   useEffect(() => {
-    console.log("second");
     fetchUserMaps(currentPage);
   }, [currentPage]);
 
@@ -59,7 +58,7 @@ const Home: React.FC = () => {
       {userMaps.length ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {userMaps.map((map) => (
-            <DashboardListItem key={map._id} map={map} onClick={() => handleMapClick(map)} />
+            <CaptureItem key={map._id} map={map} onClick={() => handleMapClick(map)} />
           ))}
         </div>
       ) : (

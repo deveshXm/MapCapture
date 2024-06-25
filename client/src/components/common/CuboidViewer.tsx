@@ -5,7 +5,12 @@ import { CuboidScene } from "../../utils/cuboidScene";
 import Progress from "../ui/Progress";
 import { MAPBOX_CONFIG } from "../../constants/config";
 
-const CuboidViewer: React.FC<{ capturedImage: string }> = ({ capturedImage }) => {
+interface CuboidViewerProps {
+  onLoad?: () => void;
+  capturedImage: string;
+}
+
+const CuboidViewer: React.FC<CuboidViewerProps> = ({ onLoad, capturedImage }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sceneRef = useRef<CuboidScene | null>(null);
   const [progress, setProgress] = useState(0);
@@ -32,6 +37,10 @@ const CuboidViewer: React.FC<{ capturedImage: string }> = ({ capturedImage }) =>
       setProgress(50);
     }
   }, [capturedImage]);
+
+  useEffect(() => {
+    if (progress === 100 && onLoad) onLoad();
+  }, [progress]);
 
   return (
     <div style={{ position: "relative", width: MAPBOX_CONFIG.MAP_WIDTH, height: MAPBOX_CONFIG.MAP_HEIGHT }}>

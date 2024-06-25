@@ -8,7 +8,6 @@ const initialState: MapTypes.MapState = {
   capturedImage: null,
   savedMaps: [],
   annotation: "",
-  error: null,
 };
 
 const mapSlice = createSlice({
@@ -22,7 +21,7 @@ const mapSlice = createSlice({
       state.zoom = action.payload;
     },
     setCapturedImage: (state, action: PayloadAction<string | null>) => {
-      state.capturedImage = `${action.payload}?access_token=${MAPBOX_CONFIG.ACCESS_TOKEN}`;
+      state.capturedImage = action.payload;
     },
     setSavedMaps: (state, action: PayloadAction<MapTypes.MapData[]>) => {
       state.savedMaps = action.payload;
@@ -30,11 +29,8 @@ const mapSlice = createSlice({
     setAnnotation: (state, action: PayloadAction<string>) => {
       state.annotation = action.payload;
     },
-    setError: (state, action: PayloadAction<string | null>) => {
-      state.error = action.payload;
-    },
   },
 });
 
-export const { setCenter, setZoom, setCapturedImage, setSavedMaps, setAnnotation, setError } = mapSlice.actions;
+export const { setCenter, setZoom, setCapturedImage, setSavedMaps, setAnnotation } = mapSlice.actions;
 export default mapSlice.reducer;

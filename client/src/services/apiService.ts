@@ -23,7 +23,19 @@ export const apiService = {
     return response.data;
   },
   saveMapData: async (center: [number, number], zoom: number, capturedImage: string, annotation?: string) => {
-    const response = await api.post("/maps", { center, zoom, capturedImage, annotation });
+    const formData = new FormData();
+    formData.append("center", JSON.stringify(center));
+    formData.append("zoom", zoom.toString());
+    const imageBlob = await fetch(capturedImage).then((res) => res.blob());
+    formData.append("capturedImage", imageBlob, "mapImage.png");
+    if (annotation) {
+      formData.append("annotation", annotation);
+    }
+    const response = await api.post("/maps", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   },
   getMapData: async (id: string) => {
@@ -41,9 +53,5 @@ export const apiService = {
   getTopRegions24H: async () => {
     const response = await api.get("/maps/top/24h");
     return response.data;
-  },
-  getStaticMapImageUrl: (center: [number, number], zoom: number, width: number, height: number): string => {
-    const [lng, lat] = center;
-    return `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${lng},${lat},${zoom}/${width}x${height}@2x`;
   },
 };

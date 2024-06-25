@@ -4,13 +4,17 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Map, { NavigationControl, ViewStateChangeEvent } from "react-map-gl";
 
-import { RootState } from "../../store";
-import { MAPBOX_CONFIG } from "../../constants/config";
-import { setCenter, setZoom } from "../../store/mapSlice";
+import { RootState } from "../../../store";
+import { MAPBOX_CONFIG } from "../../../constants/config";
+import { setCenter, setZoom } from "../../../store/mapSlice";
 
-import Progress from "../ui/Progress";
+import Progress from "../../ui/Progress";
 
-const MapView: React.FC = () => {
+interface MapViewProps {
+  onLoad: () => void;
+}
+
+const MapView: React.FC<MapViewProps> = ({ onLoad }) => {
   const { center, zoom } = useSelector((state: RootState) => state.map);
   const [progress, setProgress] = useState(0);
 
@@ -23,6 +27,7 @@ const MapView: React.FC = () => {
 
   const handleLoad = () => {
     setProgress(100);
+    onLoad();
   };
 
   const handleError = () => {
@@ -52,6 +57,7 @@ const MapView: React.FC = () => {
         onMove={handleMapMove}
         minZoom={MAPBOX_CONFIG.MIN_ZOOM}
         maxZoom={MAPBOX_CONFIG.MAX_ZOOM}
+        preserveDrawingBuffer={true}
         onLoad={handleLoad}
       >
         <NavigationControl position="top-left" />

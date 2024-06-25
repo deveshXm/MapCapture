@@ -4,7 +4,6 @@ declare namespace MapTypes {
     zoom: number;
     capturedImage: string | null;
     savedMaps: MapData[];
-    error: string | null;
     annotation: string;
   }
 
