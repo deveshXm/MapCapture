@@ -5,7 +5,6 @@ This project is a MERN (MongoDB, Express.js, React.js, Node.js) stack applicatio
 Link : [mapcap.vercel.app](mapcap.vercel.app)
 
 ## ✨ Features
-
 - 🌍 Interactive map selection using Google Maps or Mapbox
 - 📸 Capture visible map region as an image
 - 🧊 Apply captured image as a texture on a 3D cuboid using BabylonJS
@@ -67,6 +66,10 @@ Link : [mapcap.vercel.app](mapcap.vercel.app)
 - `GET /api/maps/top24h` : Get top 3 most frequently captured regions from last 24 hour
 - `POST /api/user/register`: Register a new user
 - `POST /api/user/login`: Log in a user
+
+## High Levle Architecture
+
+![architecture](image.png)
 
 ## 🚀 Algorithm Implementation and Caching Strategy
 
