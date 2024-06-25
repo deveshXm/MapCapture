@@ -13,6 +13,7 @@ import { RootState } from "./store";
 import { Title } from "./components/ui/Title";
 import Navbar from "./components/navbar";
 import TrendingRegions from "./pages/TrendingRegions";
+import { notification } from "antd";
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -21,6 +22,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
+    notification.info({ message: "Early requests may take a long time even upto 1 minute. Try again after few minutes if data doesn't load" });
     const storedToken = getItemWithExpiry("token");
     const storedUser = getItemWithExpiry("user");
     if (storedToken && storedUser) {
