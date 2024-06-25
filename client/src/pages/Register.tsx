@@ -9,7 +9,7 @@ import { setCredentials } from "../store/authSlice";
 import { Title } from "../components/ui/Title";
 import GradientButton from "../components/ui/GradientButton";
 import { GradientInput } from "../components/ui/Gradientinput";
-import { Label, LabelInputContainer } from "../components/ui/Label";
+import { Label, LabelInputContainer } from "../components/ui/label";
 import { AuroraBackground } from "../components/ui/aurora-background";
 
 const Register: React.FC = () => {
