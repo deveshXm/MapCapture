@@ -9,7 +9,7 @@ import { setCredentials } from "../store/authSlice";
 import { Title } from "../components/ui/Title";
 import { GradientInput } from "../components/ui/Gradientinput";
 import GradientButton from "../components/ui/GradientButton";
-import { Label, LabelInputContainer } from "../components/ui/label";
+import { Label, LabelInputContainer } from "../components/ui/Label";
 import { AuroraBackground } from "../components/ui/aurora-background";
 
 const Login: React.FC = () => {
