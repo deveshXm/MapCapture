@@ -8,7 +8,7 @@ import Register from "./pages/Register";
 import MapCapture from "./pages/MapCapture";
 import TopRegions from "./pages/TopRegions";
 
-import { clearCredentials, setCredentials } from "./store/authSlice";
+import { clearCredentials, getItemWithExpiry, setCredentials } from "./store/authSlice";
 import { RootState } from "./store";
 import { Title } from "./components/ui/Title";
 import Navbar from "./components/navbar";
@@ -21,17 +21,16 @@ const App: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    const storedToken = sessionStorage.getItem("token");
-    const storedUser = sessionStorage.getItem("user");
+    const storedToken = getItemWithExpiry("token");
+    const storedUser = getItemWithExpiry("user");
     if (storedToken && storedUser) {
-      dispatch(setCredentials({ token: storedToken, user: JSON.parse(storedUser) }));
+      dispatch(setCredentials({ token: storedToken as string, user: JSON.parse(storedUser as string) }));
     } else {
       dispatch(clearCredentials());
     }
     setTimeout(() => {
       setLoading(false);
     }, 2000);
-
   }, [token, dispatch]);
   if (loading) {
     return (

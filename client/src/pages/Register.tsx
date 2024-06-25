@@ -1,28 +1,49 @@
+import { notification } from "antd";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import { apiService } from "../services/apiService";
 import { setCredentials } from "../store/authSlice";
-import { Label, LabelInputContainer } from "../components/ui/label";
+
 import { Input } from "../components/ui/input";
+import GradientButton from "../components/ui/GradientButton";
+import { Label, LabelInputContainer } from "../components/ui/label";
 import { AuroraBackground } from "../components/ui/aurora-background";
-import { BottomGradient } from "../components/ui/gradient";
-import { useNavigate } from "react-router-dom";
-import { notification } from "antd";
+import { Title } from "../components/ui/Title";
+import { AxiosError } from "axios";
 
 const Register: React.FC = () => {
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const response = await apiService.register(username, email, password);
       dispatch(setCredentials({ token: response.token, user: response.user }));
-    } catch (error) {
-      notification.error({ message: "Invalid Credentials." });
+      notification.success({ message: "Registration successful!" });
+      navigate("/dashboard"); // Redirect to dashboard or any other page
+    } catch (error: any) {
+      switch (error.response.status) {
+        case 409:
+          notification.error({ message: "User already exists." });
+          break;
+        case 400:
+          notification.error({ message: "Validation failed. Please check your input." });
+          break;
+        default:
+          notification.error({ message: "An unexpected error occurred. Please try again." });
+          break;
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,7 +59,7 @@ const Register: React.FC = () => {
     <AuroraBackground>
       <div className=" h-full flex justify-center items-center relative">
         <div className="max-w-md w-full mx-auto rounded-2xl p-4 md:p-8 shadow-[0px_0px_0px_0.2px_#686869] bg-black min-w-80 md:min-w-96">
-          <h2 className="font-bold text-3xl text-neutral-200">Register</h2>
+          <Title>Register</Title>
           <form className="my-8" onSubmit={handleSubmit}>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="text">Name</Label>
@@ -50,25 +71,16 @@ const Register: React.FC = () => {
             </LabelInputContainer>
             <LabelInputContainer className="mb-6">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" placeholder="••••••••" type="Password" onChange={handlePasswordChange} />
+              <Input id="password" placeholder="••••••••" type="Password" onChange={handlePasswordChange} minLength={6} />
             </LabelInputContainer>
-            <button
-              className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-              type="submit"
-            >
+            <GradientButton type="submit" disabled={loading}>
               Register &rarr;
-              <BottomGradient />
-            </button>
+            </GradientButton>
           </form>
           <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
-          <button
-            className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-            type="submit"
-            onClick={handleLogin}
-          >
+          <GradientButton type="submit" onClick={handleLogin} disabled={loading}>
             &larr; Login
-            <BottomGradient />
-          </button>
+          </GradientButton>
         </div>
       </div>
     </AuroraBackground>
