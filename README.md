@@ -5,6 +5,7 @@ This project is a MERN (MongoDB, Express.js, React.js, Node.js) stack applicatio
 Link : [mapcap.vercel.app](mapcap.vercel.app)
 
 ## ✨ Features
+
 - 🌍 Interactive map selection using Google Maps or Mapbox
 - 📸 Capture visible map region as an image
 - 🧊 Apply captured image as a texture on a 3D cuboid using BabylonJS
@@ -97,51 +98,158 @@ Link : [mapcap.vercel.app](mapcap.vercel.app)
 
 By leveraging geohashing, we ensure that our system remains efficient and scalable, capable of handling frequent accesses to top regions effectively. This approach not only optimizes performance but also simplifies the caching strategy, crucial for applications demanding high availability and speed.
 
-### Caching Strategy
+### Caching Strategy for Top Trending Regions ( last 24 hours)
 
-To enhance the performance of frequently accessed map data, we have implemented a caching mechanism using Redis. This approach helps in reducing the load on the database and improves the response time for the end-users. The caching strategy involves storing the results of computationally expensive queries in Redis and updating the cache at regular intervals.
+Our caching strategy is designed to balance data freshness, query performance, and system resource utilization. Here's a detailed breakdown of our approach:
 
-### Top Trending Regions of the Last 24 Hours
+#### 1. Multi-Level Caching
 
-We have implemented an algorithm to identify the top three most frequently captured regions in the last 24 hours. This algorithm is designed to be efficient and scalable, even with large datasets. The results of this algorithm are cached in Redis and updated every hour using a cron job.
+We implement a two-tier caching system:
 
-#### Algorithm Logic and Thoughts
+a) **Redis Sorted Sets (Primary Cache)**
 
-1. **Bucketization**: The approach uses hourly buckets (sorted sets) to store statistics. This allows for efficient sliding window operations and easier data management. Each hourly bucket contains the geohash counts for that specific hour.
+- Stores raw geohash frequency data
+- Updated in real-time with each new data point
+- Retains granular, hourly data for the last 24 hours
 
-2. **Write Efficiency**:
+b) **Processed Results Cache**
 
-   - **ZADD with INCR and EX**: We use the ZADD command with the INCR and EX options in a single operation to increment the geohash count and set an expiry time. This reduces the number of Redis calls and ensures that old data is automatically cleaned up.
-   - **Set Size Limitation**: We set a maximum size (e.g., 240) for each hourly set. If the set size exceeds this threshold, we remove the lowest-scoring elements to keep the set size manageable.
+- Stores the computed top trending regions
+- Updated periodically or on-demand
+- Serves as a quick-access cache for frequent queries
 
-3. **Read Efficiency**:
+#### 2. Time-Based Data Management
 
-   - **ZUNIONSTORE**: To get the top regions for the last 24 hours, we use the ZUNIONSTORE command to combine the hourly buckets. This operation is optimized by removing unnecessary elements before the union.
-   - **Caching the Result**: The result of the union operation is cached for faster subsequent reads within the same hour.
+- **Hourly Buckets**: Data is segmented into hourly buckets, allowing for precise time-based queries and efficient data expiration.
+- **Sliding Window**: The system maintains a rolling 24-hour window, automatically expiring old data.
+- **TTL (Time-To-Live)**: Each hourly bucket has a 26-hour TTL, ensuring automatic cleanup of outdated data.
 
-4. **Memory Optimization**:
+#### 3. Cache Update Mechanisms
 
-   - **Trimming During Increment**: Every time we increment a geohash count, we check if the set size exceeds the threshold. If it does, we remove the lowest-scoring elements.
-   - **Trimming Before Union**: Before combining the hourly sets, we trim each set to the threshold size.
-   - **Trimming After Union**: After combining the sets, we trim the resulting set if it exceeds the threshold.
+a) **Write-Through Caching**
 
-5. **Cache Update**: The fetched data is then stored in the Redis cache with a TTL (Time-To-Live) to ensure it is updated every hour. This step ensures that the cache remains fresh and reflects the most recent data.
+- Every new geohash immediately updates the corresponding hourly bucket in Redis
+- Ensures the primary cache (Redis Sorted Sets) is always up-to-date
 
-#### Reasons for Choosing This Approach
+b) **Lazy Loading for Processed Results**
 
-1. **Efficiency and Scalability**: The chosen approach leverages Redis's capabilities for real-time data aggregation and querying, making it highly efficient and scalable for handling large datasets.
+- The top trending regions are computed on-demand
+- Results are then cached with a short TTL (e.g., 5 minutes)
+- Subsequent requests within the TTL period serve the cached results
 
-2. **Performance Optimization**: Using Redis for caching ensures that frequently requested data is served quickly, reducing the load on the database and improving the overall performance of the application.
+c) **Periodic Background Updates**
 
-#### Reasons for Not Choosing Other Algorithms
+- An optional background job can precompute and update the trending regions cache at regular intervals (e.g., every 5 minutes)
+- Helps in reducing latency for user requests at the cost of slightly increased system load
 
-1. **Redis TopK**: While Redis TopK provides efficient top-k queries, it does not inherently support the temporal component required for our use case, which involves tracking data over the last 24 hours with hourly granularity.
+#### 4. Cache Invalidation
 
-2. **MapReduce**: MapReduce could be used for processing large datasets, but it typically involves a more complex setup and is better suited for batch processing rather than real-time data querying and aggregation.
+- **Time-Based Invalidation**: The processed results cache automatically invalidates after its short TTL
+- **Manual Invalidation**: Provides an endpoint to force-refresh the cache if needed (e.g., for administrative purposes)
 
-3. **FP-Growth and Apriori Algorithms**: These algorithms are primarily used for finding frequent itemsets and association rules in transactional datasets. They are not optimized for the specific task of counting and ranking geohashes based on their frequency over a defined time window.
+#### 5. Fallback Mechanism
 
-By implementing this algorithm and caching strategy, we ensure that the application can efficiently handle large datasets and provide quick responses to the end-users. This approach strikes a balance between simplicity, efficiency, and scalability, making it well-suited for our use case.
+- If Redis is unavailable or returns no data, the system falls back to querying the main database (MongoDB)
+- This ensures system resilience and data availability, albeit with potentially higher latency
+
+#### 6. Memory Management
+
+- **Set Size Limitation**: Each hourly bucket is capped at a maximum number of elements (e.g., 240)
+- **Least Frequently Used (LFU) Eviction**: When a set reaches its size limit, the least frequent geohashes are evicted
+- This approach ensures that memory usage remains bounded while retaining the most relevant data
+
+#### 7. Cache Consistency
+
+- The system prioritizes eventual consistency
+- Real-time updates are reflected in the primary cache (Redis Sorted Sets) immediately
+- The processed results cache may have a short lag (up to its TTL duration) in reflecting the very latest data
+
+This caching strategy enables our system to handle high traffic efficiently, provide near-real-time trending data, and maintain a good balance between data freshness and system performance. It's designed to be scalable and resilient, with built-in mechanisms to handle data expiration, memory management, and system failures.
+
+### Algorithm
+
+We use Redis Sorted Sets to store and manage geohash data. Each hourly period is represented by a separate sorted set, with the following structure:
+
+- Key: `geohash:{YYYYMMDD}_{HH}`
+- Members: Geohash strings
+- Scores: Frequency counts
+
+#### Core Components
+
+- **Geohash Recorder**
+
+  - Increments geohash counts in the current hour's sorted set
+  - Manages set size to prevent unbounded growth
+
+- **Top Regions Retriever**
+
+  - Aggregates data from the last 24 hourly sets
+  - Computes and caches the top trending regions
+
+- **In-Memory Queue**
+  - Buffers incoming geohash data
+  - Ensures reliable processing during traffic spikes
+
+#### Key Algorithms
+
+- **Geohash Recording**
+
+```typescript
+async function recordGeohash(geohash: string) {
+  const key = getCurrentHourKey();
+  await redisClient.zIncrBy(key, 1, geohash);
+  await redisClient.expire(key, 26 * 60 * 60); // 26 hours TTL
+
+  const setSize = await redisClient.zCard(key);
+  if (setSize > MAX_SET_SIZE) {
+    await redisClient.zRemRangeByRank(key, 0, setSize - MAX_SET_SIZE - 1);
+  }
+}
+```
+
+- Increments the geohash count in the current hour's set
+  Sets a 26-hour expiration on the set
+  Trims the set if it exceeds the maximum size
+
+- **Top Regions Retrieval**
+
+```typescript
+async function getTopRegions24H() {
+  const keys = getLast24HourKeys();
+  const tempKey = "temp_top_regions";
+
+  await redisClient.zUnionStore(tempKey, keys);
+  const topGeohashes = await redisClient.zRevRange(tempKey, 0, 2, "WITHSCORES");
+  await redisClient.del(tempKey);
+
+  return processResults(topGeohashes);
+}
+```
+
+- This function combines data from the last 24 hourly sets Retrieves the top 3 geohashes
+  Processes and returns the results
+
+#### Optimizations
+
+- **Set Size Limitation**: Each hourly set is capped at a maximum size (e.g., 240 elements) to prevent unbounded growth and ensure efficient operations.
+  Sliding Window: By using hourly sets, we maintain a precise 24-hour sliding window without the need for complex data structure management.
+
+- **Caching** : The results of getTopRegions24H are cached with a short TTL, reducing computation for frequent requests.
+  Asynchronous Processing: An in-memory queue buffers incoming geohash data, allowing for smooth handling of traffic spikes.
+
+#### Performance Considerations
+
+- **Write Operations** : O(log(N)) complexity for each geohash increment, where N is the set size.
+
+- **Read Operations** : O(K log(N) + M log(M)) for retrieving top regions, where K is the number of hourly sets, N is the average set size, and M is the number of unique geohashes across all sets.
+
+#### Scalability
+
+- This system is designed to handle high write throughput and frequent read operations.
+
+- It can be further scaled by implementing Redis clusters for distributed data storage
+  Using read replicas to offload read operations
+  Increasing the granularity of time buckets for extremely high traffic scenarios
 
 ### Top Trending Regions of All Time
 
@@ -176,6 +284,65 @@ We have implemented an algorithm to identify the top three most frequently captu
 3. **Distributed Computing Frameworks (e.g., Apache Spark)**: While powerful for large-scale data processing, setting up and managing a distributed computing environment adds complexity and overhead. For scenarios where MongoDB serves as the primary data store, integrating a distributed framework might be over-engineering unless the dataset size mandates it.
 
 By implementing this algorithm and caching strategy, we ensure that the application can efficiently handle large datasets and provide quick responses to the end-users. This approach strikes a balance between simplicity, efficiency, and scalability, making it well-suited for our use case.
+
+## Caching Strategy for Top 3 Regions of All Time
+
+In addition to tracking trending regions over the last 24 hours, our system also maintains a cache for the top 3 regions of all time. This presents different challenges and requires a distinct approach.
+
+### Data Structure
+
+We use a Redis Sorted Set to store the all-time geohash frequencies:
+
+- Key: `geohash:all_time`
+- Members: Geohash strings
+- Scores: All-time frequency counts
+
+### Caching Mechanism
+
+1. **Incremental Updates**
+
+   - Every new geohash saves the score in the all-time sorted set
+   - This ensures the data is always up-to-date without need for periodic full recalculations
+
+   ```typescript
+   async function incrementAllTimeGeohash(geohash: string) {
+     await redisClient.setEx("topRegions", geohash);
+   }
+   ```
+
+2. **Top Regions Retrieval**
+
+   - The top 3 regions are fetched directly from the sorted set
+   - Results are cached in a separate key for quick access.
+
+### Optimization Techniques
+
+1. **Cached Results with TTL**
+
+   - The processed top 3 regions are cached with a TTL (1 hour).
+   - This reduces computation for frequent requests while ensuring data doesn't become stale.
+
+2. **Background Update Job**
+
+   - An optional background job can update the cached top regions periodically (1 hour)
+   - This ensures the cached data is fresh even if there are no user requests.
+
+3. **Consistency Considerations**
+
+   - The all-time data is eventually consistent.
+   - The cached top 3 regions may have a slight delay in reflecting recent changes (up to the cache TTL - 1 hour)
+
+### Fallback Mechanism
+
+- If Redis is unavailable, we fall back to querying the main database (MongoDB)
+- This query would aggregate all-time data, which could be slow for large datasets
+- To mitigate this, we could maintain a periodically updated summary in MongoDB
+
+### Memory Management
+
+- We only store geohashes that have a chance of being in the top 3, significantly reducing memory usage
+
+This caching strategy for all-time top regions balances the need for up-to-date data with efficient resource utilization. It provides quick access to the top regions while managing memory usage and ensuring system resilience.
 
 ## Flow Chart
 
