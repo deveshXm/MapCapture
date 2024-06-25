@@ -69,7 +69,7 @@ Link : [mapcap.vercel.app](mapcap.vercel.app)
 
 ## High Levle Architecture
 
-![architecture](image.png)
+![arc](architecture.png)
 
 ## 🚀 Algorithm Implementation and Caching Strategy
 
