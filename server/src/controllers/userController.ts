@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { registerUser, loginUser } from "../services/userService";
 import { asyncHandler } from "../utils/asyncHandler";
 import { validateLogin, validateRegister } from "../validators/userValidators";
+import ApiError from "../utils/ApiError";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   validateRegister(req.body);
