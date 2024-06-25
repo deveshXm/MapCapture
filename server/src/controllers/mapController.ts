@@ -19,14 +19,14 @@ export const saveMapData = [
     if (!req.file) {
       throw new ApiError(400, "No image file uploaded");
     }
-    console.log(req.file.path);
     const { center, zoom, annotation } = req.body;
     const parsedData = {
       center: JSON.parse(center),
       zoom: Number(zoom),
-      annotation: annotation || undefined,
+      annotation: annotation ? JSON.parse(annotation) : null,
       capturedImage: `${process.env.BASE_URI}/${req.file.path}`,
     };
+    console.log(parsedData);
     validateMapData(parsedData);
     const mapData = await mapService.saveMapData({ ...parsedData, userId: req.user?._id } as IMapData);
     res.status(201).json({ success: true, data: mapData });

@@ -5,8 +5,8 @@ import { UI_CONFIG } from "../constants/config";
 import { apiService } from "../services/apiService";
 
 import { Title } from "../components/ui/Title";
-import MapDetailModal from "../components/modal/MapDetailModal";
 import CaptureItem from "../components/pages/Home/CaptureItem";
+import MapDetailModal from "../components/pages/Home/MapDetailModal";
 import PaginationButton from "../components/pages/Home/PaginationButton";
 
 const Home: React.FC = () => {

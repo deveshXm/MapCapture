@@ -5,14 +5,15 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "../store";
 import { apiService } from "../services/apiService";
-import { setAnnotation, setCapturedImage } from "../store/mapSlice";
+import { setCapturedImage } from "../store/mapSlice";
 
 import Button from "../components/ui/Button";
-import { Label } from "../components/ui/label";
 import { Title } from "../components/ui/Title";
-import Textarea from "../components/ui/TextArea";
 import MapView from "../components/pages/MapCapture/MapView";
 import CuboidViewer from "../components/common/CuboidViewer";
+import Banner from "../components/ui/Banner";
+import { CircleAlert } from "lucide-react";
+import { Text } from "../components/ui/Text";
 
 const MapCapture: React.FC = () => {
   const dispatch = useDispatch();
@@ -21,27 +22,23 @@ const MapCapture: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   const handleSaveMap = async () => {
-    setLoading(true);
     if (!capturedImage) return;
-
     try {
+      setLoading(true);
       await apiService.saveMapData(center, zoom, capturedImage, annotation);
       notification.success({ message: "Capture saved!" });
     } catch (error) {
       console.error("Failed to save map:", error);
       notification.error({ message: "Something went wrong!" });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  };
-
-  const handleAnnotationChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    dispatch(setAnnotation(e.target.value));
   };
 
   const handleCapture = async () => {
-    setLoading(true);
     if (!mapRef.current) return;
     try {
+      setLoading(true);
       const canvas = await html2canvas(mapRef.current);
       const imageUrl = canvas.toDataURL("image/png");
       dispatch(setCapturedImage(imageUrl));
@@ -61,14 +58,9 @@ const MapCapture: React.FC = () => {
       {capturedImage ? (
         <div className="mt-4">
           <Button.Root onClick={handleResetCapture} className="mb-4" variant="soft" disabled={loading}>
-            <Button.Label>&larr; Go Back</Button.Label>
+            <Button.Label>&larr; Map</Button.Label>
           </Button.Root>
-          <Title className="mb-4">3D View</Title>
           <CuboidViewer capturedImage={capturedImage} onLoad={() => setLoading(false)} />
-          <div className="mt-4">
-            <Label>Annotation (Optional)</Label>
-            <Textarea value={annotation} rows={3} onChange={handleAnnotationChange} placeholder="Add an annotation" className="mt-4" variant="bottomOutlined" />
-          </div>
           <Button.Root onClick={handleSaveMap} className="mt-2 mx-auto" disabled={loading}>
             <Button.Label>Save Map</Button.Label>
           </Button.Root>
@@ -78,6 +70,14 @@ const MapCapture: React.FC = () => {
           <div ref={mapRef}>
             <MapView onLoad={() => setLoading(false)} />
           </div>
+          <Banner.Root intent="info" className="p-[--toast-padding] mt-4">
+            <Banner.Content>
+              <CircleAlert className="size-5 text-[--body-text-color]" />
+              <div className="space-y-2">
+                <Text size="sm">Click on map to annotate the location</Text>
+              </div>
+            </Banner.Content>
+          </Banner.Root>
           <Button.Root onClick={handleCapture} className="mx-auto mt-4" disabled={loading}>
             <Button.Label>Capture Map</Button.Label>
           </Button.Root>

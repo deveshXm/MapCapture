@@ -6,11 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { apiService } from "../services/apiService";
 import { setCredentials } from "../store/authSlice";
 
-import { Input } from "../components/ui/input";
+import { Title } from "../components/ui/Title";
+import { GradientInput } from "../components/ui/Gradientinput";
 import GradientButton from "../components/ui/GradientButton";
 import { Label, LabelInputContainer } from "../components/ui/label";
 import { AuroraBackground } from "../components/ui/aurora-background";
-import { Title } from "../components/ui/Title";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -45,13 +45,15 @@ const Login: React.FC = () => {
           <form className="my-8" onSubmit={handleSubmit}>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" placeholder="luke@skywalker.com" type="email" onChange={handleEmailChange} />
+              <GradientInput id="email" placeholder="luke@skywalker.com" type="email" onChange={handleEmailChange} />
             </LabelInputContainer>
             <LabelInputContainer className="mb-6">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" placeholder="••••••••" type="Password" onChange={handlePasswordChange} minLength={6}/>
+              <GradientInput id="password" placeholder="••••••••" type="Password" onChange={handlePasswordChange} minLength={6} />
             </LabelInputContainer>
-            <GradientButton type="submit" disabled={loading}>Login &rarr;</GradientButton>
+            <GradientButton type="submit" disabled={loading}>
+              Login &rarr;
+            </GradientButton>
           </form>
           <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
           <GradientButton onClick={handleRegister} disabled={loading}>

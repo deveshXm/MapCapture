@@ -7,7 +7,7 @@ const initialState: MapTypes.MapState = {
   zoom: MAPBOX_CONFIG.DEFAULT_ZOOM,
   capturedImage: null,
   savedMaps: [],
-  annotation: "",
+  annotation: null,
 };
 
 const mapSlice = createSlice({
@@ -26,7 +26,7 @@ const mapSlice = createSlice({
     setSavedMaps: (state, action: PayloadAction<MapTypes.MapData[]>) => {
       state.savedMaps = action.payload;
     },
-    setAnnotation: (state, action: PayloadAction<string>) => {
+    setAnnotation: (state, action: PayloadAction<MapTypes.Annotation>) => {
       state.annotation = action.payload;
     },
   },

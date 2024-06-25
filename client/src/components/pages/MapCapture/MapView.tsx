@@ -2,21 +2,24 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { notification } from "antd";
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Map, { NavigationControl, ViewStateChangeEvent } from "react-map-gl";
+import Map, { NavigationControl, Marker, Popup, ViewStateChangeEvent } from "react-map-gl";
 
 import { RootState } from "../../../store";
 import { MAPBOX_CONFIG } from "../../../constants/config";
-import { setCenter, setZoom } from "../../../store/mapSlice";
+import { setAnnotation, setCenter, setZoom } from "../../../store/mapSlice";
 
 import Progress from "../../ui/Progress";
+import AnnotationModal from "./AnnotationModal";
 
 interface MapViewProps {
   onLoad: () => void;
 }
 
 const MapView: React.FC<MapViewProps> = ({ onLoad }) => {
-  const { center, zoom } = useSelector((state: RootState) => state.map);
+  const [pointer, setPointer] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [progress, setProgress] = useState(0);
+  const { center, zoom, annotation } = useSelector((state: RootState) => state.map);
 
   const dispatch = useDispatch();
 
@@ -33,6 +36,18 @@ const MapView: React.FC<MapViewProps> = ({ onLoad }) => {
   const handleError = () => {
     notification.error({ message: "Something went wrong!" });
     setProgress(100);
+  };
+
+  const handleMapClick = (event: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
+    setIsModalOpen(true);
+    const { lngLat } = event;
+    setPointer({ longitude: lngLat.lng, latitude: lngLat.lat });
+  };
+
+  const handleAnnotationSubmit = (note: string) => {
+    if (note && pointer) {
+      dispatch(setAnnotation({ ...pointer, note } as MapTypes.Annotation));
+    }
   };
 
   return (
@@ -59,9 +74,19 @@ const MapView: React.FC<MapViewProps> = ({ onLoad }) => {
         maxZoom={MAPBOX_CONFIG.MAX_ZOOM}
         preserveDrawingBuffer={true}
         onLoad={handleLoad}
+        onClick={handleMapClick}
       >
         <NavigationControl position="top-left" />
+        {annotation && (
+          <>
+            <Marker longitude={annotation.longitude} latitude={annotation.latitude} />
+            <Popup longitude={annotation.longitude} latitude={annotation.latitude} closeButton={false} closeOnClick={false}>
+              {annotation.note}
+            </Popup>
+          </>
+        )}
       </Map>
+      {isModalOpen && <AnnotationModal onClose={() => setIsModalOpen(false)} onSubmit={handleAnnotationSubmit} />}
     </div>
   );
 };

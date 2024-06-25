@@ -6,12 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { apiService } from "../services/apiService";
 import { setCredentials } from "../store/authSlice";
 
-import { Input } from "../components/ui/input";
+import { Title } from "../components/ui/Title";
 import GradientButton from "../components/ui/GradientButton";
+import { GradientInput } from "../components/ui/Gradientinput";
 import { Label, LabelInputContainer } from "../components/ui/label";
 import { AuroraBackground } from "../components/ui/aurora-background";
-import { Title } from "../components/ui/Title";
-import { AxiosError } from "axios";
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -63,15 +62,15 @@ const Register: React.FC = () => {
           <form className="my-8" onSubmit={handleSubmit}>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="text">Name</Label>
-              <Input id="text" placeholder="Luke Skywalker" type="name" onChange={handleNameChange} />
+              <GradientInput id="text" placeholder="Luke Skywalker" type="name" onChange={handleNameChange} />
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" placeholder="luke@skywalker.com" type="email" onChange={handleEmailChange} />
+              <GradientInput id="email" placeholder="luke@skywalker.com" type="email" onChange={handleEmailChange} />
             </LabelInputContainer>
             <LabelInputContainer className="mb-6">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" placeholder="••••••••" type="Password" onChange={handlePasswordChange} minLength={6} />
+              <GradientInput id="password" placeholder="••••••••" type="Password" onChange={handlePasswordChange} minLength={6} />
             </LabelInputContainer>
             <GradientButton type="submit" disabled={loading}>
               Register &rarr;

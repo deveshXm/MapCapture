@@ -22,14 +22,14 @@ export const apiService = {
     const response = await api.post("/users/login", { email, password });
     return response.data;
   },
-  saveMapData: async (center: [number, number], zoom: number, capturedImage: string, annotation?: string) => {
+  saveMapData: async (center: [number, number], zoom: number, capturedImage: string, annotation?: MapTypes.Annotation) => {
     const formData = new FormData();
     formData.append("center", JSON.stringify(center));
     formData.append("zoom", zoom.toString());
     const imageBlob = await fetch(capturedImage).then((res) => res.blob());
     formData.append("capturedImage", imageBlob, "mapImage.png");
     if (annotation) {
-      formData.append("annotation", annotation);
+      formData.append("annotation", JSON.stringify(annotation));
     }
     const response = await api.post("/maps", formData, {
       headers: {
