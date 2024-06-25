@@ -8,7 +8,7 @@ This project is a MERN (MongoDB, Express.js, React.js, Node.js) stack applicatio
 - 📸 Capture visible map region as an image
 - 🧊 Apply captured image as a texture on a 3D cuboid using BabylonJS
 - 💾 Save and retrieve map captures
-- 📊 Identify top 3 most frequently captured regions
+- 📊 Identify top 3 most frequently captured regions for last 24 hours and all time.
 - ⚡ Caching mechanism for improved performance
 - 🔐 User authentication and authorization
 - ✏️ Annotation functionality for maps
@@ -126,4 +126,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+You don't need one.
