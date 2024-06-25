@@ -24,6 +24,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       setLoading(true);
+      notification.info({ message: "Login might take upto 1 minute due to server spinup" });
       const response = await apiService.login(email, password);
       dispatch(setCredentials({ token: response.token, user: response.user }));
     } catch (error) {

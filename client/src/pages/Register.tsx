@@ -25,6 +25,7 @@ const Register: React.FC = () => {
     e.preventDefault();
     try {
       setLoading(true);
+      notification.info({ message: "Register might take upto 1 minute due to server spinup" });
       const response = await apiService.register(username, email, password);
       dispatch(setCredentials({ token: response.token, user: response.user }));
       notification.success({ message: "Registration successful!" });

@@ -1,11 +1,11 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 export const connectDatabase = async (): Promise<void> => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI as string);
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    process.exit(1);
-  }
+  await mongoose.connect(process.env.MONGODB_URI as string);
+  console.log("Connected to MongoDB");
+};
+
+export const disconnectDatabase = async () => {
+  await mongoose.disconnect();
+  console.log("Disconnected from MongoDB");
 };

@@ -1,16 +1,8 @@
-import multer from "multer";
 import path from "path";
-import fs from "fs";
-import { NextFunction, Request } from "express";
+import multer from "multer";
+import { Request } from "express";
+
 import ApiError from "../utils/ApiError";
-
-// Ensure the uploads folder exists
-const uploadsDir = path.join(__dirname, "../..", "uploads");
-
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  console.log(`Created uploads directory at ${uploadsDir}`);
-}
 
 const storage = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {

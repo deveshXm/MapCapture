@@ -28,9 +28,7 @@ const App: React.FC = () => {
     } else {
       dispatch(clearCredentials());
     }
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    setLoading(false);
   }, [token, dispatch]);
   if (loading) {
     return (
