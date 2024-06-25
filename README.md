@@ -58,6 +58,10 @@ Link : [mapcap.vercel.app](mapcap.vercel.app)
 4. View the captured region applied as a texture on a 3D cuboid.
 5. Access previously saved captures and annotations.
 
+## Loom Video
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/1cdaefe21ce140ea9a902a25bf62a833?sid=254f2d71-52e7-4e6e-9ef1-92ef41448dd3" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+
 ## 🔌 API Endpoints
 
 - `POST /api/maps/`: Save a new map capture
