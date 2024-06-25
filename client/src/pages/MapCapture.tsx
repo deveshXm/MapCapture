@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
 import { notification } from "antd";
 import html2canvas from "html2canvas";
+import { CircleAlert } from "lucide-react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "../store";
@@ -8,12 +9,10 @@ import { apiService } from "../services/apiService";
 import { setCapturedImage } from "../store/mapSlice";
 
 import Button from "../components/ui/Button";
-import { Title } from "../components/ui/Title";
+import Banner from "../components/ui/Banner";
+import { Text } from "../components/ui/Text";
 import MapView from "../components/pages/MapCapture/MapView";
 import CuboidViewer from "../components/common/CuboidViewer";
-import Banner from "../components/ui/Banner";
-import { CircleAlert } from "lucide-react";
-import { Text } from "../components/ui/Text";
 
 const MapCapture: React.FC = () => {
   const dispatch = useDispatch();
