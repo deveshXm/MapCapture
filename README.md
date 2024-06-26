@@ -6,10 +6,10 @@ Link : [mapcap.vercel.app](mapcap.vercel.app)
 
 ## ✨ Features
 
-- 🌍 Interactive map selection using Google Maps or Mapbox
+- 🌍 Interactive map selection using Mapbox
 - 📸 Capture visible map region as an image
 - 🧊 Apply captured image as a texture on a 3D cuboid using BabylonJS
-- 💾 Save and retrieve map captures
+- 💾 Save and retrieve previous state and map captures
 - 📊 Identify top 3 most frequently captured regions for last 24 hours and all time.
 - ⚡ Caching mechanism for improved performance
 - 🔐 User authentication and authorization
