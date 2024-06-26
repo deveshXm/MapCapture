@@ -66,6 +66,8 @@ Link : [mapcap.vercel.app](mapcap.vercel.app)
 ## 🔌 API Endpoints
 
 - `POST /api/maps/`: Save a new map capture
+- `POST /api/maps/state`: Save map state
+- `GET /api/maps/state`: Retrieve map state
 - `GET /api/maps/user/?page=1`: Retrieve all captures for the authenticated user
 - `GET /api/maps/top`: Get top 3 most frequently captured regions of all time
 - `GET /api/maps/top24h` : Get top 3 most frequently captured regions from last 24 hour
