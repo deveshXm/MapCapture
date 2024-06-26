@@ -72,7 +72,7 @@ Link : [mapcap.vercel.app](mapcap.vercel.app)
 - `POST /api/user/register`: Register a new user
 - `POST /api/user/login`: Log in a user
 
-## High Levle Architecture
+## High Level Architecture
 
 ![arc](architecture.png)
 
