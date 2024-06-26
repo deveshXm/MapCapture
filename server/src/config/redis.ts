@@ -1,6 +1,5 @@
 import { createClient } from "redis";
 import { config } from "dotenv";
-import { TOP_REGIONS_24H_CACHE_KEY, TOP_REGIONS_24H_ZUNION_KEY, TOP_REGIONS_CACHE_KEY } from "./cache";
 
 config();
 
@@ -14,7 +13,7 @@ export const redisClient = createClient({
 
 export const connectRedis = async () => {
   await redisClient.connect();
-  await redisClient.flushDb();
+  // await redisClient.flushDb();
   console.log("Connected to Redis.");
 };
 

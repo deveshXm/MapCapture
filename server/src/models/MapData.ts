@@ -13,6 +13,14 @@ export interface IMapData extends Document {
   geohash: string;
 }
 
+export interface IMapState extends Document {
+  userId: mongoose.Types.ObjectId;
+  center: [number, number];
+  zoom: number;
+  annotations: Annotation;
+  updatedAt: Date;
+}
+
 const AnnotationSchema: Schema = new Schema(
   {
     latitude: { type: Number, required: true },
@@ -40,4 +48,15 @@ MapDataSchema.pre<IMapData>("save", function (next) {
   next();
 });
 
-export default mongoose.model<IMapData>("MapData", MapDataSchema);
+const MapStateSchema: Schema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  center: { type: [Number], required: true },
+  zoom: { type: Number, required: true },
+  annotation: { type: AnnotationSchema, default: null },
+  updatedAt: { type: Date, default: Date.now },
+});
+
+const MapState = mongoose.model<IMapState>("MapState", MapStateSchema);
+const MapData = mongoose.model<IMapData>("MapData", MapDataSchema);
+
+export { MapState, MapData };

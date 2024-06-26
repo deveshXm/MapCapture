@@ -1,6 +1,6 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import { notification } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Map, { NavigationControl, Marker, Popup, ViewStateChangeEvent } from "react-map-gl";
 
@@ -20,6 +20,20 @@ const MapView: React.FC<MapViewProps> = ({ onLoad }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [progress, setProgress] = useState(0);
   const { center, zoom, annotation } = useSelector((state: RootState) => state.map);
+
+  const [viewState, setViewState] = useState({
+    longitude: center[0],
+    latitude: center[1],
+    zoom: zoom,
+  });
+
+  useEffect(() => {
+    setViewState({
+      longitude: center[0],
+      latitude: center[1],
+      zoom: zoom,
+    });
+  }, [center, zoom]);
 
   const dispatch = useDispatch();
 
@@ -61,11 +75,7 @@ const MapView: React.FC<MapViewProps> = ({ onLoad }) => {
       )}
       <Map
         mapboxAccessToken={MAPBOX_CONFIG.ACCESS_TOKEN}
-        initialViewState={{
-          longitude: center[0],
-          latitude: center[1],
-          zoom: zoom,
-        }}
+        {...viewState}
         style={{ width: "100%", height: "100%", borderRadius: "0.5rem" }}
         mapStyle={MAPBOX_CONFIG.STYLE_URL}
         onError={handleError}

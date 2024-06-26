@@ -2,7 +2,8 @@ import { Mutex } from "async-mutex";
 
 import ApiError from "../utils/ApiError";
 import { redisClient } from "../config/redis";
-import MapData, { IMapData } from "../models/MapData";
+import { pushGeohashToQueue } from "../config/queue";
+import { IMapData, IMapState, MapData, MapState } from "../models/MapData";
 import { fetchTopRegions24HFromDB, fetchTopRegionsFromDB } from "../utils/topRegions";
 import {
   getLast24HoursKeys,
@@ -12,7 +13,6 @@ import {
   TOP_REGIONS_CACHE_KEY,
   TOP_REGIONS_CACHE_TTL,
 } from "../config/cache";
-import { pushGeohashToQueue } from "../config/queue";
 
 const mutex = new Mutex();
 
@@ -21,6 +21,15 @@ export const saveMapData = async (mapData: IMapData): Promise<IMapData> => {
   await newMapData.save();
   pushGeohashToQueue(newMapData.geohash);
   return newMapData;
+};
+
+export const saveMapState = async (mapState: Partial<IMapState>): Promise<IMapState | null> => {
+  const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+  return await MapState.findOneAndUpdate({ userId: mapState.userId }, mapState, options);
+};
+
+export const getMapState = async (userId: string): Promise<IMapState | null> => {
+  return await MapState.findOne({ userId });
 };
 
 export const getMapData = async (id: string): Promise<IMapData> => {

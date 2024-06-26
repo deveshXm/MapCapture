@@ -38,6 +38,20 @@ export const apiService = {
     });
     return response.data;
   },
+  saveMapState: async (center: [number, number], zoom: number, annotation?: MapTypes.Annotation) => {
+    const data = {
+      center: JSON.stringify(center),
+      zoom: zoom.toString(),
+      annotation: annotation ? JSON.stringify(annotation) : null,
+    };
+    const response = await api.post("/maps/state", data);
+    return response.data;
+  },
+
+  getMapState: async () => {
+    const response = await api.get("/maps/state");
+    return response.data;
+  },
   getMapData: async (id: string) => {
     const response = await api.get(`/maps/${id}`);
     return response.data;

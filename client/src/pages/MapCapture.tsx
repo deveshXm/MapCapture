@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "../store";
 import { apiService } from "../services/apiService";
-import { setCapturedImage } from "../store/mapSlice";
+import { setAnnotation, setCapturedImage, setCenter, setZoom } from "../store/mapSlice";
 
 import Button from "../components/ui/Button";
 import Banner from "../components/ui/Banner";
@@ -29,6 +29,36 @@ const MapCapture: React.FC = () => {
     } catch (error) {
       console.error("Failed to save map:", error);
       notification.error({ message: "Something went wrong!" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveState = async () => {
+    try {
+      setLoading(true);
+      await apiService.saveMapState(center, zoom, annotation);
+      notification.success({ message: "State Saved!" });
+    } catch (error) {
+      console.error("Failed to save map:", error);
+      notification.error({ message: "Something went wrong!" });
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleLoadState = async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getMapState();
+      const { center, zoom, annotation } = response.data;
+      console.log(center, zoom, annotation);
+      dispatch(setCenter(center));
+      dispatch(setZoom(zoom));
+      if (annotation) dispatch(setAnnotation(annotation));
+    } catch (error: any) {
+      if (error.response.status == 400) notification.error({ message: "No state found!" });
+      else notification.error({ message: "Something went wrong!" });
+      console.error("Failed to save map:", error);
     } finally {
       setLoading(false);
     }
@@ -77,9 +107,17 @@ const MapCapture: React.FC = () => {
               </div>
             </Banner.Content>
           </Banner.Root>
-          <Button.Root onClick={handleCapture} className="mx-auto mt-4" disabled={loading}>
-            <Button.Label>Capture Map</Button.Label>
-          </Button.Root>
+          <div className="flex justify-between ">
+            <Button.Root onClick={handleCapture} className="mx-auto mt-4" disabled={loading}>
+              <Button.Label>Capture Map</Button.Label>
+            </Button.Root>
+            <Button.Root onClick={handleSaveState} className="mx-auto mt-4" disabled={loading}>
+              <Button.Label>Save State</Button.Label>
+            </Button.Root>
+            <Button.Root onClick={handleLoadState} className="mx-auto mt-4" disabled={loading}>
+              <Button.Label>Load State</Button.Label>
+            </Button.Root>
+          </div>
         </>
       )}
     </div>

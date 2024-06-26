@@ -3,10 +3,10 @@ import * as mapService from "../services/mapService";
 import { asyncHandler } from "../utils/asyncHandler";
 import { AuthRequest } from "../middleware/auth";
 import rateLimit from "express-rate-limit";
-import { validateMapData } from "../validators/mapValidators";
+import { validateMapData, validateMapState } from "../validators/mapValidators";
 import { upload } from "../config/multer";
 import ApiError from "../utils/ApiError";
-import { IMapData } from "../models/MapData";
+import { IMapData, IMapState } from "../models/MapData";
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -26,7 +26,6 @@ export const saveMapData = [
       annotation: annotation ? JSON.parse(annotation) : null,
       capturedImage: `${process.env.BASE_URI}/${req.file.path}`,
     };
-    console.log(parsedData);
     validateMapData(parsedData);
     const mapData = await mapService.saveMapData({ ...parsedData, userId: req.user?._id } as IMapData);
     res.status(201).json({ success: true, data: mapData });
@@ -68,3 +67,23 @@ export const getTopRegions24H = [
     res.status(200).json({ success: true, data: topRegions });
   }),
 ];
+
+export const saveMapState = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const { center, zoom, annotation } = req.body;
+  const parsedData = {
+    center: JSON.parse(center),
+    zoom: Number(zoom),
+    annotation: annotation ? JSON.parse(annotation) : null,
+  };
+  validateMapState(parsedData);
+  const mapState = await mapService.saveMapState({ ...parsedData, userId: req.user?._id } as Partial<IMapState>);
+  res.status(200).json({ success: true, data: mapState });
+});
+
+export const loadMapState = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const mapState = await mapService.getMapState(req.user?._id as string);
+  if (!mapState) {
+    throw new ApiError(400, "Map state not found");
+  }
+  res.status(200).json({ success: true, data: mapState });
+});

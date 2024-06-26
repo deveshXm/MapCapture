@@ -1,7 +1,6 @@
-import geohash, { GeographicBoundingBox } from "ngeohash";
 import { PipelineStage } from "mongoose";
 
-import MapData from "../models/MapData";
+import { MapData } from "../models/MapData";
 
 export const fetchTopRegionsFromDB = async () => {
   const pipeline: PipelineStage[] = [

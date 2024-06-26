@@ -67,3 +67,47 @@ export const validateMapData = (data: any) => {
     throw new ApiError(400, error.details[0].message);
   }
 };
+
+const mapStateSchema = Joi.object({
+  center: Joi.array()
+    .items(
+      Joi.number().required().messages({
+        "number.base": "Center coordinates must be numbers.",
+        "any.required": "Center coordinates are required.",
+      })
+    )
+    .length(2)
+    .required()
+    .custom((value, helpers) => {
+      const [lng, lat] = value;
+      if (lat < -90 || lat > 90) {
+        return helpers.error("any.invalid", { message: "Latitude must be between -90 and 90 degrees." });
+      }
+      if (lng < -180 || lng > 180) {
+        return helpers.error("any.invalid", { message: "Longitude must be between -180 and 180 degrees." });
+      }
+      return value;
+    })
+    .messages({
+      "array.length": "Center must be an array of two numbers.",
+      "any.required": "Center is required.",
+      "any.invalid": "{{#message}}",
+    }),
+  zoom: Joi.number().required().min(0).max(22).messages({
+    "number.base": "Zoom must be a number.",
+    "any.required": "Zoom is required.",
+    "number.min": "Zoom must be between 0 and 22.",
+    "number.max": "Zoom must be between 0 and 22.",
+  }),
+  annotation: annotationSchema.optional().allow(null).messages({
+    "object.base": "Annotation must be an object.",
+  }),
+});
+
+export const validateMapState = (data: any) => {
+  const { error } = mapStateSchema.validate(data, { abortEarly: false });
+  if (error) {
+    const errorMessages = error.details.map((detail) => detail.message).join(", ");
+    throw new ApiError(400, errorMessages);
+  }
+};
